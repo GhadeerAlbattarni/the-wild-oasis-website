@@ -36,6 +36,18 @@ export async function getCabin(id) {
   return data;
 }
 
+// Guests are uniquely identified by their email address
+export async function getGuest(email) {
+  const { data, error } = await supabase
+    .from("guests")
+    .select("*")
+    .eq("email", email)
+    .single();
+
+  // No error here! We handle the possibility of no guest in the sign in callback
+  return data;
+}
+
 export async function getBookedDatesByCabinId(cabinId) {
   let today = new Date();
   today.setUTCHours(0, 0, 0, 0);
@@ -87,4 +99,18 @@ export async function getCountries() {
   } catch {
     throw new Error("Could not fetch countries");
   }
+}
+
+/////////////
+// CREATE
+
+export async function createGuest(newGuest) {
+  const { data, error } = await supabase.from("guests").insert([newGuest]);
+
+  if (error) {
+    console.error(error);
+    throw new Error("Guest could not be created");
+  }
+
+  return data;
 }
